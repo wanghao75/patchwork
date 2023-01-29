@@ -1,6 +1,6 @@
-=========
+==========
 Patchwork
-=========
+==========
 
 .. image:: https://pyup.io/repos/github/getpatchwork/patchwork/shield.svg
    :target: https://pyup.io/repos/github/getpatchwork/patchwork/
