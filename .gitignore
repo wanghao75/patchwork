@@ -58,3 +58,5 @@ patchwork/settings/production.py
 
 # django-dbbackup files
 /.backups
+
+.idea/

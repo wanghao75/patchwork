@@ -5,6 +5,7 @@
 
 import codecs
 import datetime
+import os
 from email.header import decode_header
 from email.header import make_header
 from email.utils import mktime_tz
@@ -1218,6 +1219,14 @@ def parse_mail(mail, list_id=None):
                                 series = None
                         elif len(series) == 1:
                             series = series.first()
+                            if not series.name:
+                                patches = Patch.objects.filter(series=series)
+                                for p in patches:
+                                    if p.name.__contains__("1/"):
+                                        write_project_series_dict_to_file(project.name, series.id, p.name)
+                                        break
+                            else:
+                                write_project_series_dict_to_file(project.name, series.id, series.name)
                     else:
                         x = n = 1
 
@@ -1238,6 +1247,14 @@ def parse_mail(mail, list_id=None):
                             version=version,
                             total=n,
                         )
+                        if not series.name:
+                            patches = Patch.objects.filter(series=series)
+                            for p in patches:
+                                if p.name.__contains__("1/"):
+                                    write_project_series_dict_to_file(project.name, series.id, p.name)
+                                    break
+                        else:
+                            write_project_series_dict_to_file(project.name, series.id, series.name)
 
                         # NOTE(stephenfin) We must save references for series.
                         # We do this to handle the case where a later patch is
@@ -1341,6 +1358,15 @@ def parse_mail(mail, list_id=None):
                     total=n,
                 )
 
+                if not series.name:
+                    patches = Patch.objects.filter(series=series)
+                    for p in patches:
+                        if p.name.__contains__("1/"):
+                            write_project_series_dict_to_file(project.name, series.id, p.name)
+                            break
+                else:
+                    write_project_series_dict_to_file(project.name, series.id, series.name)
+
                 # we don't save the in-reply-to or references fields
                 # for a cover letter, as they can't refer to the same
                 # series
@@ -1361,6 +1387,8 @@ def parse_mail(mail, list_id=None):
                     submitter=author,
                     content=message,
                 )
+
+            write_project_series_dict_to_file(project.name, series.id, name)
 
             logger.debug('Cover letter saved')
 
@@ -1414,6 +1442,24 @@ def parse_mail(mail, list_id=None):
     logger.debug('Comment saved')
 
     return comment
+
+
+def write_project_series_dict_to_file(prj, ser_id, ser_name):
+    if prj is not None and ser_id is not None and ser_name is not None:
+        string = prj + ":" + str(ser_id) + ":" + ser_name + "\n"
+    else:
+        return
+
+    import os
+    if os.path.exists("/opt/project_series.txt"):
+        with open("/opt/project_series.txt", "r", encoding="utf-8") as ff:
+            data = ff.readlines()
+
+            for i in data:
+                if str(ser_id) in i:
+                    return
+    with open("/opt/project_series.txt", "a", encoding="utf-8") as f:
+        f.writelines(string)
 
 
 def find_filenames(diff):
