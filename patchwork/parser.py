@@ -1451,8 +1451,8 @@ def write_project_series_dict_to_file(prj, ser_id, ser_name):
         return
 
     import os
-    if os.path.exists("/opt/project_series.txt"):
-        with open("/opt/project_series.txt", "r", encoding="utf-8") as ff:
+    if os.path.exists("/home/project_series.txt"):
+        with open("/home/project_series.txt", "r", encoding="utf-8") as ff:
             data = ff.readlines()
 
             for i in data:
