@@ -1,8 +1,8 @@
 FROM ghcr.io/getpatchwork/pyenv:latest
 
 RUN cat /etc/passwd
-ARG UID=30
-ARG GID=30
+ARG UID=35
+ARG GID=35
 
 ARG TZ="Asia/Shanghai"
 ENV DEBIAN_FRONTEND noninteractive
