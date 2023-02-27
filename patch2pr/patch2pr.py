@@ -1,3 +1,4 @@
+import logging
 import time
 import requests
 import os
@@ -12,7 +13,7 @@ BRANCHES_MAP = {
 def get_mail_step():
     if os.path.exists("/home/project_series.txt"):
         os.remove("/home/project_series.txt")
-    r = os.popen('su - www-data -c "getmail --getmaildir="/home/patchwork/" --idle INBOX"').readlines()
+    os.popen('su - www-data -c "getmail --getmaildir="/home/patchwork/" --idle INBOX"').readlines()
 
 
 def download_patches_by_using_git_pw(ser_id):
@@ -21,8 +22,8 @@ def download_patches_by_using_git_pw(ser_id):
         os.popen("mkdir -p /home/patches/{}".format(ser_id))
     res = os.popen("git-pw series download {} /home/patches/{}/".format(ser_id, ser_id)).readlines()
     for r in res:
-        if "error" in r:
-            r2 = os.popen("git-pw series download {} /home/patches/{}/".format(ser_id, ser_id)).readlines()
+        if "Failed" in r:
+            os.popen("git-pw series download {} /home/patches/{}/".format(ser_id, ser_id)).readlines()
 
 
 def get_project_and_series_information():
@@ -69,7 +70,6 @@ def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
     else:
         os.chdir("/home/kernel")
         os.popen("git pull").readlines()
-        time.sleep(30)
 
     # delete all branches startswith patch
     # branches_list = os.popen("git branch").readlines()
@@ -87,6 +87,7 @@ def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
     for am_r in am_res:
         if am_r.__contains__("Patch failed at"):
             am_success = False
+            logging.error("failed to apply patch, reason is %s" % am_r)
             break
         else:
             am_success = True
@@ -243,7 +244,7 @@ def main():
 
     if server == "" or server_token == "" or repo_user == "" or gitee_token == "" or not_cibot_gitee_token == "" or \
             user_email == "" or user_pass == "" or mail_server == "":
-        print("args can not be empty")
+        logging.error("args can not be empty")
         return
 
     # config get-mail tools
@@ -254,7 +255,7 @@ def main():
 
     information = get_project_and_series_information()
     if len(information) == 0:
-        print("not new series of patches which received by get-mail tool")
+        logging.info("not a new series of patches which received by get-mail tool")
         return
 
     for i in information:
