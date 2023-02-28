@@ -1452,13 +1452,13 @@ def write_project_series_dict_to_file(prj, ser_id, ser_name):
 
     import os
     if os.path.exists("/home/project_series.txt"):
-        with open("/home/patches/project_series.txt", "r", encoding="utf-8") as ff:
+        with open("/home/project_series.txt", "r", encoding="utf-8") as ff:
             data = ff.readlines()
 
             for i in data:
                 if str(ser_id) in i:
                     return
-    with open("/home/patches/project_series.txt", "a", encoding="utf-8") as f:
+    with open("/home/project_series.txt", "a", encoding="utf-8") as f:
         f.writelines(string)
 
 
