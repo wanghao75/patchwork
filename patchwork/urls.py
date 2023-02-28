@@ -24,11 +24,13 @@ from patchwork.views import pwclient as pwclient_views
 from patchwork.views import series as series_views
 from patchwork.views import user as user_views
 from patchwork.views import xmlrpc as xmlrpc_views
-
+from pathcwork.settings import production
+from django.views import static
 
 admin.autodiscover()
 
 urlpatterns = [
+    re_path(r'static/(?P<path>.*)$', static.serve, {'document_root': production.STATIC_ROOT}, name='/srv/patchwork/htdocs/static'),
     path('admin/', admin.site.urls),
     path('', project_views.project_list, name='project-list'),
     path(
