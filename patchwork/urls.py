@@ -30,7 +30,7 @@ from django.views import static
 admin.autodiscover()
 
 urlpatterns = [
-    re_path(r'static/(?P<path>.*)$', static.serve, {'document_root': production.STATIC_ROOT}, name='/srv/patchwork/htdocs/static'),
+    re_path(r'static/(?P<path>.*)$', static.serve, {'document_root': production.STATIC_ROOT}, name='static'),
     path('admin/', admin.site.urls),
     path('', project_views.project_list, name='project-list'),
     path(
