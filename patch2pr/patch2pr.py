@@ -11,9 +11,9 @@ BRANCHES_MAP = {
 
 
 def get_mail_step():
-    if os.path.exists("/home/patches/project_series.txt"):
-        os.remove("/home/patches/project_series.txt")
-    os.popen('su - www-data -c "getmail --getmaildir="/home/patchwork/" --idle INBOX"').readlines()
+    if os.path.exists("/home/project_series.txt"):
+        os.remove("/home/project_series.txt")
+    os.popen('su - www-data -c "getmail --getmaildir="/home/" --idle INBOX"').readlines()
 
 
 def download_patches_by_using_git_pw(ser_id):
@@ -27,17 +27,19 @@ def download_patches_by_using_git_pw(ser_id):
 
 
 def get_project_and_series_information():
-    if not os.path.exists("/home/patches/project_series.txt"):
+    if not os.path.exists("/home/project_series.txt"):
         return
-    with open("/home/patches/project_series.txt", "r", encoding="utf-8") as f:
+    with open("/home/project_series.txt", "r", encoding="utf-8") as f:
         infor = f.readlines()
 
     return infor
 
 
 def config_get_mail(u_name, u_pass, email_server, path_of_sh):
-    if os.path.exists("/home/patches/email/getmailrc"):
+    if os.path.exists("/home/getmailrc"):
         return
+    else:
+        os.popen("touch /home/getmailrc").readlines()
 
     retriever = ["[retriever]", "type = SimplePOP3Retriever",
                  "server = {}".format(email_server), "username = {}".format(u_name), "password = {}".format(u_pass),
@@ -46,10 +48,10 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
 
     destination = ["[destination]", "type = MDA_external", "path = {}".format(path_of_sh), "ignore_stderr = true"]
 
-    options = ["[options]", "delete = false", "message_log = /home/patches/email/getmail.log",
+    options = ["[options]", "delete = false", "message_log = /home/getmail.log",
                "message_log_verbose = true", "read_all = false", "received = false", "delivered_to = false"]
 
-    with open("/home/patches/email/getmailrc", "a", encoding="utf-8") as f:
+    with open("/home/getmailrc", "a", encoding="utf-8") as f:
         f.writelines([r + "\n" for r in retriever])
         f.writelines([r + "\n" for r in destination])
         f.writelines([r + "\n" for r in options])
