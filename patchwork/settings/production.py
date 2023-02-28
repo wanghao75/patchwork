@@ -71,4 +71,4 @@ DATABASES = {
 
 DATA_DIR = '/var/lib/patchcheck'
 ALLOWED_HOSTS = ['*']
-DEBUG = False
+DEBUG = True
