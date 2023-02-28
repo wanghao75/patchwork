@@ -4,3 +4,5 @@ django-filter~=22.1.0
 psycopg2~=2.9.0
 sqlparse~=0.4.0
 requests~=2.24.0
+getmail6~=6.18.12
+git-pw~=2.4.0
