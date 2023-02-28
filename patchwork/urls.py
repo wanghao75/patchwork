@@ -24,7 +24,7 @@ from patchwork.views import pwclient as pwclient_views
 from patchwork.views import series as series_views
 from patchwork.views import user as user_views
 from patchwork.views import xmlrpc as xmlrpc_views
-from pathcwork.settings import production
+from patchwork.settings import production
 from django.views import static
 
 admin.autodiscover()
