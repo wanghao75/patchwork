@@ -52,7 +52,7 @@ ADMINS = (
 # https://docs.djangoproject.com/en/2.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
 #
 
-STATIC_ROOT = os.environ.get('STATIC_ROOT', '/srv/patchwork/htdocs/static')
+STATIC_ROOT = os.environ.get('STATIC_ROOT', 'static')
 
 STATICFILES_STORAGE = (
     'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
