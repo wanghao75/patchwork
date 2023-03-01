@@ -10,10 +10,7 @@ ENV DJANGO_SETTINGS_MODULE patchwork.settings.production
 
 RUN groupadd --gid=$GID patchwork && \
     useradd --uid=$UID --gid=$GID --create-home patchwork && \
-    usermod -s /bin/bash patchwork && \
-    usermod -g root patchwork && \
-    chown -R patchwork:patchwork /home && \
-    chmod 777 /home
+    
 RUN rm -f /etc/localtime; ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 
 RUN eval "$(pyenv init -)"
@@ -24,7 +21,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     tzdata \
     vim-gtk \
+    sudo \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN usermod -s /bin/bash patchwork && \
+    usermod -g root patchwork && \
+    sed '20a\patchwork    ALL=(ALL:ALL) ALL'
 
 RUN pip install wheel tox
 
