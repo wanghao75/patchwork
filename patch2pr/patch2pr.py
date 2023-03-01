@@ -101,9 +101,9 @@ def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
 
 # summit a pr
 def make_pr_to_summit_commit(source_branch, base_branch, token, pr_url_in_email_list, cover_letter, receiver_email):
-    title = "create pr from patch"
+    title = "[patch-sync] create pr from patches"
     if pr_url_in_email_list or cover_letter:
-        body = "PR sync from: {} \n{}".format(pr_url_in_email_list, cover_letter)
+        body = "PR sync from: \n{} \n{}".format(pr_url_in_email_list, cover_letter)
     else:
         body = ""
 
@@ -133,7 +133,7 @@ def send_mail_to_notice_developers(pr, email_address):
     sender = mail_user
     receivers = ",".join(email_address)
 
-    content = "pull request link: %s" % pr
+    content = "your patch has been converted to a pull request, pull request link is: %s" % pr
     title = "notice"
     message = MIMEText(content, 'plain', 'utf-8')
     message['From'] = "patchwork bot <{}>".format(sender)
