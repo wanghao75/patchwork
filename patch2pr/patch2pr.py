@@ -5,8 +5,18 @@ import os
 
 BRANCHES_MAP = {
     "master": "master",
-    "openEuler-5.10-LTS-SP1": "OLK-5.10",
     "openEuler-1.0-LTS": "openEuler-1.0-LTS",
+    "openEuler-22.03-LTS-SP1": "openEuler-22.03-LTS-SP1",
+    "OLK-5.10": "OLK-5.10",
+    "openEuler-22.03-LTS": "openEuler-22.03-LTS",
+    "openEuler-22.09": "openEuler-22.09",
+    "devel-6.1": "devel-6.1",
+    "openEuler-22.03-LTS-Ascend": "openEuler-22.03-LTS-Ascend",
+    "openEuler-22.09-HCK": "openEuler-22.09-HCK",
+    "openEuler-20.03-LTS-SP3": "openEuler-20.03-LTS-SP3",
+    "openEuler-21.09": "openEuler-21.09",
+    "openEuler-21.03": "openEuler-21.03",
+    "openEuler-20.09": "openEuler-20.09",
 }
 
 
