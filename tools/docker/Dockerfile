@@ -9,7 +9,7 @@ COPY patchwork /home/patchwork/patchwork
 ENV DJANGO_SETTINGS_MODULE patchwork.settings.production
 
 RUN groupadd --gid=$GID patchwork && \
-    useradd --uid=$UID --gid=$GID --create-home /home patchwork && \
+    useradd --uid=$UID --gid=$GID --create-home patchwork && \
     usermod -s /bin/bash patchwork && \
     usermod -g root patchwork && \
     chown -R patchwork:patchwork /home && \
