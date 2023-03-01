@@ -45,6 +45,10 @@ def get_project_and_series_information():
     return infor
 
 
+def config_git():
+    os.popen("git config --global user.email {};git config --global user.name {}".format(os.getenv("CI_OT_EMAIL"), os.getenv("CI_BOT_NAME")))
+
+
 def config_get_mail(u_name, u_pass, email_server, path_of_sh):
     if os.path.exists("/home/getmailrc"):
         return
@@ -68,7 +72,7 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
 
 
 def config_git_pw(project_name, server_link, token):
-    os.popen("git config pw.server {};git config pw.token {};git config pw.project {}"
+    os.popen("git config --global pw.server {};git config --global pw.token {};git config --global pw.project {}"
              .format(server_link, token, project_name))
 
 
@@ -261,7 +265,9 @@ def main():
             user_email == "" or user_pass == "" or mail_server == "":
         logging.error("args can not be empty")
         return
-
+    # config git
+    config_git()
+    
     # config get-mail tools
     config_get_mail(user_email, user_pass, mail_server, "/home/patchwork/patchwork/patchwork/bin/parsemail.sh")
 
