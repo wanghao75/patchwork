@@ -27,7 +27,7 @@ def get_mail_step():
 
 
 def download_patches_by_using_git_pw(ser_id):
-    os.popen("rm -f /home/patches/*")
+    os.popen("rm -rf /home/patches/*")
     if not os.path.exists("/home/patches/{}".format(ser_id)):
         os.popen("mkdir -p /home/patches/{}".format(ser_id))
     res = os.popen("git-pw series download {} /home/patches/{}/".format(ser_id, ser_id)).readlines()
