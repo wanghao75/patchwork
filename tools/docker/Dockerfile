@@ -26,8 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN usermod -s /bin/bash patchwork && \
     usermod -g root patchwork && \
-    chown -R patchwork / && \
-    chmod -R 755 /
+    chown -R patchwork /home
 
 RUN pip install wheel tox
 
@@ -39,5 +38,5 @@ RUN pip install -r /home/patchwork/patchwork/requirements-prod.txt
 #ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 EXPOSE 8000
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
-#USER patchwork
+USER patchwork
 WORKDIR /home/patchwork/patchwork
