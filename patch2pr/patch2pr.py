@@ -77,7 +77,10 @@ def config_git_pw(project_name, server_link, token):
 def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
     if not os.path.exists("/home/kernel"):
         os.chdir("/home")
-        os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
+        r = os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
+        for res in r:
+            if "error:" in res or "fatal:" in res:
+                os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
         os.chdir("/home/kernel")
     else:
         os.chdir("/home/kernel")
