@@ -9,9 +9,11 @@ COPY patchwork /home/patchwork/patchwork
 ENV DJANGO_SETTINGS_MODULE patchwork.settings.production
 
 RUN groupadd --gid=$GID patchwork && \
-    useradd --uid=$UID --gid=$GID --create-home patchwork && \
+    useradd --uid=$UID --gid=$GID --create-home home && \
     usermod -s /bin/bash patchwork && \
-    usermod -g root patchwork
+    usermod -g root patchwork && \
+    chown -R patchwork:patchwork /home && \
+    chmod 777 /home
 RUN rm -f /etc/localtime; ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 
 RUN eval "$(pyenv init -)"
