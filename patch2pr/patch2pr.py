@@ -13,7 +13,7 @@ BRANCHES_MAP = {
 def get_mail_step():
     if os.path.exists("/home/project_series.txt"):
         os.remove("/home/project_series.txt")
-    os.popen('su patchwork -c "getmail --getmaildir="/home/" --idle INBOX"').readlines()
+    os.popen('getmail --getmaildir="/home/" --idle INBOX').readlines()
 
 
 def download_patches_by_using_git_pw(ser_id):
