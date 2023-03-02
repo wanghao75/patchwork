@@ -37,9 +37,9 @@ def download_patches_by_using_git_pw(ser_id):
 
 
 def get_project_and_series_information():
-    if not os.path.exists("/home/project_series.txt"):
-        return
-    with open("/home/project_series.txt", "r", encoding="utf-8") as f:
+    if not os.path.exists("/home/patches/project_series.txt"):
+        return []
+    with open("/home/patches/project_series.txt", "r", encoding="utf-8") as f:
         infor = f.readlines()
 
     return infor
@@ -50,10 +50,10 @@ def config_git():
 
 
 def config_get_mail(u_name, u_pass, email_server, path_of_sh):
-    if os.path.exists("/home/getmailrc"):
+    if os.path.exists("/home/patches/getmailrc"):
         return
     else:
-        os.popen("touch /home/getmailrc").readlines()
+        os.popen("touch /home/patches/getmailrc").readlines()
 
     retriever = ["[retriever]", "type = SimplePOP3Retriever",
                  "server = {}".format(email_server), "username = {}".format(u_name), "password = {}".format(u_pass),
@@ -62,7 +62,7 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
 
     destination = ["[destination]", "type = MDA_external", "path = {}".format(path_of_sh), "ignore_stderr = true"]
 
-    options = ["[options]", "delete = false", "message_log = /home/getmail.log",
+    options = ["[options]", "delete = false", "message_log = /home/patches/getmail.log",
                "message_log_verbose = true", "read_all = false", "received = false", "delivered_to = false"]
 
     with open("/home/getmailrc", "a", encoding="utf-8") as f:
@@ -275,7 +275,7 @@ def main():
     get_mail_step()
 
     information = get_project_and_series_information()
-    if len(information) == 0:
+    if len(information):
         logging.info("not a new series of patches which received by get-mail tool")
         return
 
