@@ -300,7 +300,10 @@ def main():
         emails_to_notify = [sender_email]
 
         # use patches
-        source_branch = make_branch_and_apply_patch(repo_user, gitee_token, BRANCHES_MAP[branch], series_id)
+        target_branch = BRANCHES_MAP.get(branch)
+        if target_branch is None:
+            continue
+        source_branch = make_branch_and_apply_patch(repo_user, gitee_token, target_branch, series_id)
 
         # make pr
         make_pr_to_summit_commit(source_branch, BRANCHES_MAP[branch], not_cibot_gitee_token,
