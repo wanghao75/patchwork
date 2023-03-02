@@ -21,8 +21,8 @@ BRANCHES_MAP = {
 
 
 def get_mail_step():
-    if os.path.exists("/home/project_series.txt"):
-        os.remove("/home/project_series.txt")
+    if os.path.exists("/home/patches/project_series.txt"):
+        os.remove("/home/patches/project_series.txt")
     os.popen('getmail --getmaildir="/home/" --idle INBOX').readlines()
 
 
