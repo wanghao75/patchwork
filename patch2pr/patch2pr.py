@@ -57,12 +57,12 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
 
     retriever = ["[retriever]", "type = SimplePOP3Retriever",
                  "server = {}".format(email_server), "username = {}".format(u_name), "password = {}".format(u_pass),
-                 "mailboxes = ALL"
+                 "port = {}".format(os.getenv("EMAIL_PORT"))
                  ]
 
     destination = ["[destination]", "type = MDA_external", "path = {}".format(path_of_sh), "ignore_stderr = true"]
 
-    options = ["[options]", "delete = false", "message_log = /home/patches/getmail.log",
+    options = ["[options]", "delete = false", "message_log = /home/getmail.log",
                "message_log_verbose = true", "read_all = false", "received = false", "delivered_to = false"]
 
     with open("/home/getmailrc", "a", encoding="utf-8") as f:
