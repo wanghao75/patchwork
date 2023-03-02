@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
     vim-gtk \
     sudo \
+    wget \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN usermod -s /bin/bash patchwork && \
