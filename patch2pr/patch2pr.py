@@ -23,7 +23,7 @@ BRANCHES_MAP = {
 def get_mail_step():
     if os.path.exists("/home/patches/project_series.txt"):
         os.remove("/home/patches/project_series.txt")
-    os.popen('getmail --getmaildir="/home/" --idle INBOX').readlines()
+    os.popen('getmail --getmaildir="/home/patches/" --idle INBOX').readlines()
 
 
 def download_patches_by_using_git_pw(ser_id):
@@ -65,7 +65,7 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
     options = ["[options]", "delete = false", "message_log = /home/getmail.log",
                "message_log_verbose = true", "read_all = false", "received = false", "delivered_to = false"]
 
-    with open("/home/getmailrc", "a", encoding="utf-8") as f:
+    with open("/home/patches/getmailrc", "a", encoding="utf-8") as f:
         f.writelines([r + "\n" for r in retriever])
         f.writelines([r + "\n" for r in destination])
         f.writelines([r + "\n" for r in options])
