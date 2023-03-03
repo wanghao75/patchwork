@@ -51,11 +51,17 @@ def config_git():
 
 def config_get_mail(u_name, u_pass, email_server, path_of_sh):
     if os.path.exists("/home/patches/getmailrc"):
-        return
+        with open("/home/patches/getmailrc", "r", encoding="utf-8") as ff:
+            content = ff.readlines()
+            if len(content) == 0:
+                os.popen("rm -f /home/patches/getmailrc").readlines()
+                os.popen("touch /home/patches/getmailrc").readlines()
+            else:
+                return
     else:
         os.popen("touch /home/patches/getmailrc").readlines()
 
-    retriever = ["[retriever]", "type = SimplePOP3Retriever",
+    retriever = ["[retriever]", "type = SimplePOP3SSLRetriever",
                  "server = {}".format(email_server), "username = {}".format(u_name), "password = {}".format(u_pass),
                  "port = {}".format(os.getenv("EMAIL_PORT"))
                  ]
