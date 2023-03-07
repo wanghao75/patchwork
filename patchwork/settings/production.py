@@ -58,7 +58,7 @@ STATICFILES_STORAGE = (
     'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 )
 
-CSRF_TRUSTED_ORIGINS = ['https://patchwork.osinfra.cn']
+CSRF_TRUSTED_ORIGINS = ['https://patchwork.test.osinfra.cn']
 
 DATABASES = {
     'default': {
