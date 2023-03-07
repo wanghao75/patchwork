@@ -105,10 +105,10 @@ def config_git_pw(project_name, server_link, token):
 def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
     if not os.path.exists("/home/patches/kernel"):
         os.chdir("/home/patches")
-        r = os.popen("git clone https://{}:{}@gitee.com/openeuler-sync-bot/kernel.git".format(user, token)).readlines()
+        r = os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
         for res in r:
             if "error:" in res or "fatal:" in res:
-                os.popen("git clone https://{}:{}@gitee.com/openeuler-sync-bot/kernel.git".format(user, token)).readlines()
+                os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
         os.chdir("/home/patches/kernel")
         make_fork_same_with_origin(origin_branch)
     else:
@@ -151,13 +151,13 @@ def make_pr_to_summit_commit(source_branch, base_branch, token, pr_url_in_email_
 
     data = {
         "access_token": token,
-        "head": "openeuler-sync-bot:" + source_branch,
+        "head": "wanghaosq:" + source_branch,
         "base": base_branch,
         "title": title,
         "body": body,
         "prune_source_branch": "true"
     }
-    res = requests.post(url="https://gitee.com/api/v5/repos/openeuler/kernel/pulls", data=data)
+    res = requests.post(url="https://gitee.com/api/v5/repos/wanghaosq/kernel/pulls", data=data)
 
     if res.status_code == 201:
         pull_link = res.json().get("url")
