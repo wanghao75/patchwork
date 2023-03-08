@@ -316,12 +316,12 @@ def main():
         branch = ""
         if tag.__contains__(","):
             if tag.count(",") == 1:
-                if tag.split(",")[1] == project_name:
-                    branch = tag.split(",")[1]
-                else:
-                    branch = tag.split(",")[0]
-            elif tag.count(",") >= 2:
                 branch = tag.split(",")[1]
+            elif tag.count(",") >= 2:
+                if tag.split(",")[-1] == project_name:
+                    branch = tag.split(",")[-1]
+                else:
+                    branch = tag.split(",")[-2]
         else:
             branch = tag
 
