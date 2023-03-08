@@ -1222,9 +1222,8 @@ def parse_mail(mail, list_id=None):
                             if not series.name:
                                 patches = Patch.objects.filter(series=series)
                                 for p in patches:
-                                    if p.name.__contains__("1/"):
-                                        write_project_series_dict_to_file(project.name, series.id, p.name)
-                                        break
+                                    write_project_series_dict_to_file(project.name, series.id, p.name)
+                                    break
                             else:
                                 write_project_series_dict_to_file(project.name, series.id, series.name)
                     else:
@@ -1250,9 +1249,8 @@ def parse_mail(mail, list_id=None):
                         if not series.name:
                             patches = Patch.objects.filter(series=series)
                             for p in patches:
-                                if p.name.__contains__("1/"):
-                                    write_project_series_dict_to_file(project.name, series.id, p.name)
-                                    break
+                                write_project_series_dict_to_file(project.name, series.id, p.name)
+                                break
                         else:
                             write_project_series_dict_to_file(project.name, series.id, series.name)
 
@@ -1361,9 +1359,8 @@ def parse_mail(mail, list_id=None):
                 if not series.name:
                     patches = Patch.objects.filter(series=series)
                     for p in patches:
-                        if p.name.__contains__("1/"):
-                            write_project_series_dict_to_file(project.name, series.id, p.name)
-                            break
+                        write_project_series_dict_to_file(project.name, series.id, p.name)
+                        break
                 else:
                     write_project_series_dict_to_file(project.name, series.id, series.name)
 
