@@ -1313,6 +1313,10 @@ def parse_mail(mail, list_id=None):
             # TODO(stephenfin): Remove 'series' from the conditional as we will
             # always have a series
             series.add_patch(patch, x)
+            patches = Patch.objects.filter(series=series, number=x)
+            for p in patches:
+                write_project_series_dict_to_file(project.name, series.id, p.name)
+                break
 
         return patch
     elif x == 0:  # (potential) cover letters
