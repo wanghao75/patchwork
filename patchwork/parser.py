@@ -162,13 +162,19 @@ def find_project_by_id_and_subject(list_id, subject):
     """
     projects = Project.objects.filter(listid=list_id)
     default = None
+    subject_x = subject.split("]")[0].split("[")[1]
+    if "," not in subject_x:
+        subject_x = subject_x.split(" ")[-1]
+    else:
+        subject_x = subject_x.split(",")[0].split(" ")[-1]
     for project in projects:
         if not project.subject_match:
             default = project
         elif re.search(
             project.subject_match, subject, re.MULTILINE | re.IGNORECASE
         ):
-            return project
+            if re.search(project.subject_match, subject, re.MULTILINE | re.IGNORECASE)[1] == subject_x:
+                return project
 
     return default
 
