@@ -1198,10 +1198,11 @@ def parse_mail(mail, list_id=None):
                 with transaction.atomic():
                     # if we don't have a series marker, we will never have an
                     # existing series to match against.
-                    print("try == ", ,x, n, patch)
+                    print("try == ", x, n, patch)
                     series = None
                     if n:
                         series = find_series(project, mail, author)
+                        print("get in n exists === ", series)
                         if len(series) > 1:
                             # if this isn't our final attempt, go again
                             if attempt != 10:
