@@ -1198,6 +1198,7 @@ def parse_mail(mail, list_id=None):
                 with transaction.atomic():
                     # if we don't have a series marker, we will never have an
                     # existing series to match against.
+                    print("try == ", ,x, n, patch)
                     series = None
                     if n:
                         series = find_series(project, mail, author)
@@ -1233,6 +1234,8 @@ def parse_mail(mail, list_id=None):
                     # - there is no existing series to assign this patch to, or
                     # - there is an existing series, but it already has a patch
                     #   with this number in it
+                    print("x and n", x, n)
+                    print("series is ", series, series.id, series.name)
                     if (
                         not series
                         or Patch.objects.filter(
@@ -1247,8 +1250,9 @@ def parse_mail(mail, list_id=None):
                             total=n,
                         )
                         if not series.name:
-                            patches = Patch.objects.filter(series=series)
+                            patches = Patch.objects.filter(series=series, number=x)
                             for p in patches:
+                                print("p.name == ", p.name)
                                 write_project_series_dict_to_file(project.name, series.id, p.name)
                                 break
                         else:
@@ -1446,6 +1450,7 @@ def parse_mail(mail, list_id=None):
 
 
 def write_project_series_dict_to_file(prj, ser_id, ser_name):
+    print("write params: %s%s%s\n" % (prj, ser_id, ser_name))
     if prj is not None and ser_id is not None and ser_name is not None:
         string = prj + ":" + str(ser_id) + ":" + ser_name + "\n"
     else:
