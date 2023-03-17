@@ -31,10 +31,19 @@ def make_fork_same_with_origin(branch_name):
             remote_flag = True
 
     if remote_flag:
-        os.popen("git remote add upstream https://gitee.com/openeuler/kernel.git")
-    else:
-        os.popen("git checkout {}".format(branch_name)).readlines()
-        os.popen("git pull upstream {}".format(branch_name)).readlines()
+        os.popen("git remote add upstream https://gitee.com/new-op/kernel.git")
+    os.popen("git checkout origin/{}".format(branch_name)).readlines()
+    fetch_res = os.popen("git fetch upstream {}".format(branch_name)).readlines()
+    for p in fetch_res:
+        if "error:" in p or "fatal:" in p:
+            logging.error("fetch upstream error %s" % p)
+            print("fetch upstream error %s" % p)
+    merge = os.popen("git merge upstream/{}".format(branch_name)).readlines()
+    for m in merge:
+        if "error:" in m or "fatal:" in m:
+            logging.error("fetch upstream error %s" % m)
+            print("merge upstream error %s" % m)
+    os.popen("git push").readlines()
 
 
 def get_mail_step():
@@ -86,7 +95,7 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
 
     destination = ["[destination]", "type = MDA_external", "path = {}".format(path_of_sh), "ignore_stderr = true"]
 
-    options = ["[options]", "delete = false", "message_log = /home/getmail.log",
+    options = ["[options]", "delete = false", "message_log = /home/patches/getmail.log",
                "message_log_verbose = true", "read_all = false", "received = false", "delivered_to = false"]
 
     with open("/home/patches/getmailrc", "a", encoding="utf-8") as f:
@@ -105,10 +114,10 @@ def config_git_pw(project_name, server_link, token):
 def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
     if not os.path.exists("/home/patches/kernel"):
         os.chdir("/home/patches")
-        r = os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
+        r = os.popen("git clone https://{}:{}@gitee.com/patch-bot/kernel.git".format(user, token)).readlines()
         for res in r:
             if "error:" in res or "fatal:" in res:
-                os.popen("git clone https://{}:{}@gitee.com/wanghaosq/kernel.git".format(user, token)).readlines()
+                os.popen("git clone https://{}:{}@gitee.com/patch-bot/kernel.git".format(user, token)).readlines()
         os.chdir("/home/patches/kernel")
         make_fork_same_with_origin(origin_branch)
     else:
@@ -151,16 +160,16 @@ def make_pr_to_summit_commit(source_branch, base_branch, token, pr_url_in_email_
 
     data = {
         "access_token": token,
-        "head": "wanghaosq:" + source_branch,
+        "head": "patch-bot:" + source_branch,
         "base": base_branch,
         "title": title,
         "body": body,
         "prune_source_branch": "true"
     }
-    res = requests.post(url="https://gitee.com/api/v5/repos/wanghaosq/kernel/pulls", data=data)
+    res = requests.post(url="https://gitee.com/api/v5/repos/new-op/kernel/pulls", data=data)
 
     if res.status_code == 201:
-        pull_link = res.json().get("url")
+        pull_link = res.json().get("html_url")
         send_mail_to_notice_developers(pull_link, receiver_email)
 
 
@@ -280,7 +289,8 @@ def get_email_content_sender_and_covert_to_pr_body(ser_id):
 def main():
     server = os.getenv("PATCHWORK_SERVER", "")
     server_token = os.getenv("PATCHWORK_TOKEN", "")
-    repo_user = os.getenv("REPO_OWNER", "")
+    # repo_user = os.getenv("REPO_OWNER", "")
+    repo_user = os.getenv("CI_BOT_NAME", "")
     gitee_token = os.getenv("GITEE_TOKEN", "")
     not_cibot_gitee_token = os.getenv("GITEE_TOKEN_NOT_CI_BOT", "")
     user_email = os.getenv("EMAIL_HOST_USER", "")
@@ -302,7 +312,8 @@ def main():
 
     information = get_project_and_series_information()
     if len(information) == 0:
-        logging.info("not a new series of patches which received by get-mail tool")
+        print("not a new series of patches which received by get-mail tool has been write to file")
+        os.system("cp /home/patchwork/patchwork/patch2pr.log /home/patches/log.log")
         return
 
     for i in information:
@@ -312,7 +323,7 @@ def main():
         tag = i.split(":")[2].split("[")[1].split("]")[0]
         if "PR" not in tag:
             continue
-        
+
         branch = ""
         if tag.__contains__(","):
             if tag.count(",") == 1:
@@ -344,6 +355,7 @@ def main():
         # make pr
         make_pr_to_summit_commit(source_branch, target_branch, not_cibot_gitee_token,
                                  sync_pr, letter_body, emails_to_notify)
+        os.system("cp /home/patchwork/patchwork/patch2pr.log /home/patches/log.log")
 
 
 if __name__ == '__main__':
