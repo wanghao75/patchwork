@@ -32,9 +32,18 @@ def make_fork_same_with_origin(branch_name):
 
     if remote_flag:
         os.popen("git remote add upstream https://gitee.com/openeuler/kernel.git")
-    else:
-        os.popen("git checkout {}".format(branch_name)).readlines()
-        os.popen("git pull upstream {}".format(branch_name)).readlines()
+    os.popen("git checkout origin/{}".format(branch_name)).readlines()
+    fetch_res = os.popen("git fetch upstream {}".format(branch_name)).readlines()
+    for p in fetch_res:
+        if "error:" in p or "fatal:" in p:
+            logging.error("git fetch error ", p)
+            break
+    merge = os.popen("git merge upstream/{}".format(branch_name)).readlines()
+    for m in merge:
+        if "error:" in m or "fatal:" in m:
+            logging.error("git merge error ", m)
+            break
+    os.popen("git push").readlines()
 
 
 def get_mail_step():
@@ -86,7 +95,7 @@ def config_get_mail(u_name, u_pass, email_server, path_of_sh):
 
     destination = ["[destination]", "type = MDA_external", "path = {}".format(path_of_sh), "ignore_stderr = true"]
 
-    options = ["[options]", "delete = false", "message_log = /home/getmail.log",
+    options = ["[options]", "delete = false", "message_log = /home/patches/getmail.log",
                "message_log_verbose = true", "read_all = false", "received = false", "delivered_to = false"]
 
     with open("/home/patches/getmailrc", "a", encoding="utf-8") as f:
