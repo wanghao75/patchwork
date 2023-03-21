@@ -163,7 +163,7 @@ def find_project_by_id_and_subject(list_id, subject):
     projects = Project.objects.filter(listid=list_id)
     default = None
     subject_x = subject.split("]")[0].split("[")[1]
-    if subject_x.count(" ") >= 2:
+    if subject_x.count(" ") > 2:
         subject_x = subject_x.split(" ")[-2]
     else:
         subject_x = subject_x.split(" ")[-1]
