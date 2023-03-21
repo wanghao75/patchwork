@@ -114,10 +114,11 @@ def config_git_pw(project_name, server_link, token):
 def make_branch_and_apply_patch(user, token, origin_branch, ser_id):
     if not os.path.exists("/home/patches/kernel"):
         os.chdir("/home/patches")
-        r = os.popen("git clone https://{}:{}@gitee.com/openeuler-sync-bot/kernel.git".format(user, token)).readlines()
+        r = os.popen("git clone https://{}:{}@gitee.com/ci-robot/kernel.git".format(user, token)).readlines()
         for res in r:
             if "error:" in res or "fatal:" in res:
-                os.popen("git clone https://{}:{}@gitee.com/openeuler-sync-bot/kernel.git".format(user, token)).readlines()
+                os.popen(
+                    "git clone https://{}:{}@gitee.com/ci-robot/kernel.git".format(user, token)).readlines()
         os.chdir("/home/patches/kernel")
         make_fork_same_with_origin(origin_branch)
     else:
@@ -160,7 +161,7 @@ def make_pr_to_summit_commit(source_branch, base_branch, token, pr_url_in_email_
 
     data = {
         "access_token": token,
-        "head": "openeuler-sync-bot:" + source_branch,
+        "head": "ci-robot:" + source_branch,
         "base": base_branch,
         "title": title,
         "body": body,
@@ -170,11 +171,11 @@ def make_pr_to_summit_commit(source_branch, base_branch, token, pr_url_in_email_
 
     if res.status_code == 201:
         pull_link = res.json().get("html_url")
-        send_mail_to_notice_developers(pull_link, receiver_email)
+        send_mail_to_notice_developers("your patch has been converted to a pull request, pull request link is: %s" % pull_link, receiver_email)
 
 
 # use email to notice that pr has been created
-def send_mail_to_notice_developers(pr, email_address):
+def send_mail_to_notice_developers(content, email_address):
     import smtplib
     from email.mime.text import MIMEText
 
@@ -184,7 +185,6 @@ def send_mail_to_notice_developers(pr, email_address):
     sender = mail_user
     receivers = ",".join(email_address)
 
-    content = "your patch has been converted to a pull request, pull request link is: %s" % pr
     title = "notice"
     message = MIMEText(content, 'plain', 'utf-8')
     message['From'] = "patchwork bot <{}>".format(sender)
@@ -224,6 +224,7 @@ def get_email_content_sender_and_covert_to_pr_body(ser_id):
     patch_sender_email = ""
     body = ""
     email_list_link_of_patch = ""
+    title_for_pr = ""
 
     if cover_letter_id is None or cover_letter_id == 0:
         cur.execute("SELECT name from patchwork_patch where series_id={}".format(ser_id))
@@ -231,6 +232,7 @@ def get_email_content_sender_and_covert_to_pr_body(ser_id):
         first_path_mail_name = ""
         if len(patches_names_rows) == 1:
             first_path_mail_name = patches_names_rows[0][0]
+            title_for_pr = first_path_mail_name.split("]")[1]
         else:
             for row in patches_names_rows:
                 if row[0].__contains__("01/") or row[0].__contains__("1/"):
@@ -239,9 +241,9 @@ def get_email_content_sender_and_covert_to_pr_body(ser_id):
         cur.execute(
             "SELECT headers from patchwork_patch where series_id={} and name='{}'".format(ser_id, first_path_mail_name))
         patches_headers_rows = cur.fetchall()
+        who_is_email_list = ""
         for row in patches_headers_rows:
             for string in row[0].split("\n"):
-                who_is_email_list = ""
                 if string.startswith("To: "):
                     if "<" in string:
                         who_is_email_list = string.split("<")[1].split(">")[0]
@@ -252,18 +254,27 @@ def get_email_content_sender_and_covert_to_pr_body(ser_id):
                 if string.__contains__("https://mailweb.openeuler.org/hyperkitty/list/%s/message/" % who_is_email_list):
                     email_list_link_of_patch = string.replace("<", "").replace(">", "").replace("message", "thread")
 
-        return patch_sender_email, body, email_list_link_of_patch
+        if "1/" in first_path_mail_name:
+            send_mail_to_notice_developers("You have sent a series of patches to the kernel mailing list, "
+                                           "but a cover doesn't have been sent, so bot can not generate a pull request. "
+                                           "Please check", [patch_sender_email])
+            return "", "", "", ""
+
+        return patch_sender_email, body, email_list_link_of_patch, title_for_pr
 
     cur.execute("SELECT * from patchwork_cover where id={}".format(cover_letter_id))
     cover_rows = cur.fetchall()
     cover_headers = ""
     cover_content = ""
+    cover_name = ""
     for row in cover_rows:
+        cover_name = row[5]
         cover_headers = row[3]
         cover_content = row[4]
 
-    if cover_content == "" or cover_headers == "":
-        return "", "", ""
+    if cover_content == "" or cover_headers == "" or cover_name == "":
+        return "", "", "", ""
+    title_for_pr = cover_name.split("]")[1]
 
     cover_who_is_email_list = ""
     for ch in cover_headers.split("\n"):
@@ -281,9 +292,14 @@ def get_email_content_sender_and_covert_to_pr_body(ser_id):
         if ct.__contains__("(+)") or ct.__contains__("(-)") or "mode" in ct or "| " in ct:
             continue
         else:
-            body += ct + "\n"
+            cur.execute("select name from patchwork_patch where series_id={}".format(ser_id))
+            patch_number = cur.fetchall()
+            if len(patch_number) == 1:
+                body = ""
+            else:
+                body += ct + "\n"
 
-    return patch_sender_email, body, email_list_link_of_patch
+    return patch_sender_email, body, email_list_link_of_patch, title_for_pr
 
 
 def main():
@@ -321,7 +337,7 @@ def main():
         tag = i.split(":")[2].split("[")[1].split("]")[0]
         if "PR" not in tag:
             continue
-        
+
         branch = ""
         if tag.__contains__(","):
             if tag.count(",") == 1:
@@ -340,7 +356,10 @@ def main():
         download_patches_by_using_git_pw(series_id)
 
         # get sender email and cover-letter-body
-        sender_email, letter_body, sync_pr = get_email_content_sender_and_covert_to_pr_body(series_id)
+        sender_email, letter_body, sync_pr, title_pr = get_email_content_sender_and_covert_to_pr_body(series_id)
+
+        if sender_email == "" and letter_body == "" and sync_pr == "" and title_pr == "":
+            continue
 
         emails_to_notify = [sender_email]
 
