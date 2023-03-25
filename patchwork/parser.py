@@ -162,10 +162,18 @@ def find_project_by_id_and_subject(list_id, subject):
     """
     projects = Project.objects.filter(listid=list_id)
     default = None
+
+    # check patch email like [PATCH branch 1/x] or [PATCH branch]
+    if not subject.startswith("[PATCH"):
+        # if subject like this [master 1/3] or [master], return NoneType project
+        return default
+
     subject_x = subject.split("]")[0].split("[")[1]
-    if subject_x.count(" ") > 2:
+    if subject_x.count(" ") >= 2:
+        # match situation like this [PATCH master 1/3] or [XXX PATCH master 1/3] or [PATCH XXX master 1/3]
         subject_x = subject_x.split(" ")[-2]
     else:
+        # match [PATCH master]
         subject_x = subject_x.split(" ")[-1]
     for project in projects:
         if not project.subject_match:
