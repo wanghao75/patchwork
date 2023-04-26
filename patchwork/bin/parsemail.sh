@@ -18,7 +18,7 @@ fi
 
 PYTHONPATH="${PATCHWORK_BASE}:${PATCHWORK_BASE}/lib/python:$PYTHONPATH" \
     DJANGO_SETTINGS_MODULE="$DJANGO_SETTINGS_MODULE" \
-    "$PW_PYTHON" "$PATCHWORK_BASE/manage.py" parsemail --list-id "$EMAIL_HOST_USER" "$@"
+    "$PW_PYTHON" "$PATCHWORK_BASE/manage.py" parsemail --list-id "$GET_EMAIL" "$@"
 
 # NOTE(stephenfin): We must return 0 here. When parsemail is used as a
 # delivery command from a mail server like postfix (as it is intended
