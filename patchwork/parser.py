@@ -1239,10 +1239,10 @@ def parse_mail(mail, list_id=None):
                             if not series.name:
                                 patches = Patch.objects.filter(series=series)
                                 for p in patches:
-                                    write_project_series_dict_to_file(project.name, series.id, p.name)
+                                    write_project_series_dict_to_file(list_id, project.name, series.id, p.name)
                                     break
                             else:
-                                write_project_series_dict_to_file(project.name, series.id, series.name)
+                                write_project_series_dict_to_file(list_id, project.name, series.id, series.name)
                     else:
                         x = n = 1
 
@@ -1266,10 +1266,10 @@ def parse_mail(mail, list_id=None):
                         if not series.name:
                             patches = Patch.objects.filter(series=series)
                             for p in patches:
-                                write_project_series_dict_to_file(project.name, series.id, p.name)
+                                write_project_series_dict_to_file(list_id, project.name, series.id, p.name)
                                 break
                         else:
-                            write_project_series_dict_to_file(project.name, series.id, series.name)
+                            write_project_series_dict_to_file(list_id, project.name, series.id, series.name)
 
                         # NOTE(stephenfin) We must save references for series.
                         # We do this to handle the case where a later patch is
@@ -1332,7 +1332,7 @@ def parse_mail(mail, list_id=None):
             series.add_patch(patch, x)
             patches = Patch.objects.filter(series=series, number=x)
             for p in patches:
-                write_project_series_dict_to_file(project.name, series.id, p.name)
+                write_project_series_dict_to_file(list_id, project.name, series.id, p.name)
                 break
 
         return patch
@@ -1380,10 +1380,10 @@ def parse_mail(mail, list_id=None):
                 if not series.name:
                     patches = Patch.objects.filter(series=series)
                     for p in patches:
-                        write_project_series_dict_to_file(project.name, series.id, p.name)
+                        write_project_series_dict_to_file(list_id, project.name, series.id, p.name)
                         break
                 else:
-                    write_project_series_dict_to_file(project.name, series.id, series.name)
+                    write_project_series_dict_to_file(list_id, project.name, series.id, series.name)
 
                 # we don't save the in-reply-to or references fields
                 # for a cover letter, as they can't refer to the same
@@ -1406,7 +1406,7 @@ def parse_mail(mail, list_id=None):
                     content=message,
                 )
 
-            write_project_series_dict_to_file(project.name, series.id, name)
+            write_project_series_dict_to_file(list_id, project.name, series.id, name)
 
             logger.debug('Cover letter saved')
 
@@ -1462,9 +1462,9 @@ def parse_mail(mail, list_id=None):
     return comment
 
 
-def write_project_series_dict_to_file(prj, ser_id, ser_name):
-    if prj is not None and ser_id is not None and ser_name is not None:
-        string = prj + ":" + str(ser_id) + ":" + ser_name + "\n"
+def write_project_series_dict_to_file(l_id, prj, ser_id, ser_name):
+    if l_id is not None and prj is not None and ser_id is not None and ser_name is not None:
+        string = l_id + ":" + prj + ":" + str(ser_id) + ":" + ser_name + "\n"
     else:
         return
 
