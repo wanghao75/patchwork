@@ -42,7 +42,7 @@ list_id_headers = ['List-ID', 'X-Mailing-List', 'X-list']
 #
 # Only used when there are not proper references to determine the series
 # (such as when the mail is not threaded)
-SERIES_DELAY_INTERVAL = 20
+SERIES_DELAY_INTERVAL = 60
 
 # @see https://git-scm.com/docs/git-diff#_generating_patches_with_p
 EXTENDED_HEADER_LINES = (
