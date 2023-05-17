@@ -266,6 +266,7 @@ def _find_series_by_references(project, mail):
 
     msg_id = find_message_id(mail)
     refs = [msg_id] + find_references(mail)
+    print("\nrefs in _find_series_by_references: ", refs, "\n")
 
     for ref in refs:
         try:
@@ -345,6 +346,7 @@ def find_series(project, mail, author):
         The matching ``Series`` instance, if any
     """
     series = _find_series_by_references(project, mail)
+    print("\nseries in find_series: ", series, "\n")
     if series:
         return series
 
@@ -1367,6 +1369,8 @@ def parse_mail(mail, list_id=None):
                 ).series
             except SeriesReference.DoesNotExist:
                 series = None
+
+            print("series in cover_letter: ", series, "\n")
 
             if not series:
                 series = Series.objects.create(
