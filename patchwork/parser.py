@@ -177,7 +177,7 @@ def find_project_by_id_and_subject(list_id, subject):
         elif v.match(subject_x.split(" ")[2]):
             subject_x = subject_x.split(" ")[1]
         else:
-            return default
+            subject_x = subject_x.split(" ")[1]
     else:
         # match [PATCH master]
         subject_x = subject_x.split(" ")[-1]
