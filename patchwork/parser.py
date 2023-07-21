@@ -170,8 +170,8 @@ def find_project_by_id_and_subject(list_id, subject):
 
     subject_x = subject.split("]")[0].split("[")[1]
     if subject_x.count(" ") >= 2:
-        v = re.compile(r'v\d+')
-        # match situation like this [PATCH master ...] or [PATCH master v2 ...] or [PATCH v2 master ...]
+        v = re.compile(r'v\d+', re.IGNORECASE)
+        # match situation like this [PATCH master ...] or [PATCH master v2 ...] or [PATCH v2 master ...] or [PATCH master V2 ...] or [PATCH V2 master ...]
         if v.match(subject_x.split(" ")[1]):
             subject_x = subject_x.split(" ")[2]
         elif v.match(subject_x.split(" ")[2]):
